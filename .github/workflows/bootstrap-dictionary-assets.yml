@@ -1,0 +1,28 @@
+# One-time asset migration. The regular monthly workflow rebuilds from upstream
+# Wiktionary extracts and does not require the former sd-plugins repository.
+name: Bootstrap dictionary assets
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download existing dictionary build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p dist/assets
+          gh release download dictionaries --repo itsthisjustin/sd-plugins --dir dist/assets
+          test "$(find dist/assets -type f | wc -l)" -ge 60
+      - name: Upload to standalone mirror release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release view dictionaries --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create dictionaries --repo "$GITHUB_REPOSITORY" --title "Dictionary mirror" --notes "Rolling dictionary data assets (distinct from the semver plugin release)."
+          find dist/assets -type f -print0 |
+            xargs -0 -n 8 gh release upload dictionaries --repo "$GITHUB_REPOSITORY" --clobber

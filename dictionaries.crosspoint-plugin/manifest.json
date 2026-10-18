@@ -1,0 +1,19 @@
+{
+  "title": "Dictionaries",
+  "mount": "settings",
+  "description": "Download offline dictionaries for the built-in dictionary lookup, and pick the active one.",
+  "author": "Diirge",
+  "version": "1.0.0",
+  "name": "dictionaries",
+  "files": [
+    "manifest.json",
+    "device.json",
+    "plugin.js",
+    "README.md",
+    "DETAILS.md",
+    "catalog/index.json",
+    "catalog/all-1.json",
+    "catalog/all-2.json",
+    "catalog/all-3.json"
+  ]
+}
